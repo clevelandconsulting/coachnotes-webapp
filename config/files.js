@@ -17,6 +17,10 @@ module.exports = function(lineman) {
     	    "vendor/underscore/underscore.js",
 			"vendor/bower/angular/angular.js",
 			"vendor/js/**/*.js"  //Note that this glob remains for traditional vendor libs
+		],
+		specHelpers: [
+		    "vendor/bower/angular-mocks/angular-mocks.js",
+			"spec/helpers/**/*.js"
 		]
     }
     
