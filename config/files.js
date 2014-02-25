@@ -12,6 +12,12 @@ module.exports = function(lineman) {
     // As an example, to override the file patterns for
     // the order in which to load third party JS libs:
     //
+    coffee: {
+	    app: [
+    	 	"app/js/main.coffee",
+    	 	"app/js/**/*.coffee"
+    	]
+    },
     js: {
     	vendor: [
     	    "vendor/underscore/underscore.js",
