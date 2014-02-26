@@ -3,21 +3,23 @@ class collegeService
   @http = $http
   @q = $q
   
- getAll: ->
+ get: ->
   @d = @q.defer();
-  @http.get('api/v1/colleges').success (data) =>
+  @http.get('/api/v1/colleges').success (data) =>
    @d.resolve data
+   @colleges = data
   
   @d.promise
+
+ add: (name) ->
+  @d = @q.defer();
+  @http.post('/api/v1/colleges', {name:name} ).success (data) =>
+   @d.resolve data
+   if @colleges? 
+    @colleges.push data
+   else 
+    @colleges = [data]
    
- #getAll: -> 
- # if @colleges == null
- #  @promise = @all()
- #  @promise.then (data) => @promise = data
+  @d.promise
   
- # @promise
-  
-  #result = @http.get('api/v1/colleges')
-  #console.log result
- 
 angular.module('app').service 'collegeService', collegeService

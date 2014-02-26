@@ -1,8 +1,10 @@
 class collegesController
  constructor: (@collegeService) ->
-  @collegeService.getAll().then (colleges) =>
-   @list = colleges
+  @collegeService.get()
  
+ list: ->
+  @collegeService.colleges
+  
  add: (name) ->
   @collegeService.add(name)
   

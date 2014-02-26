@@ -9,26 +9,37 @@
 describe "collegeService", ->
  Given -> module("app")
  
- Given inject ($injector, $http, $q) ->
+ Given inject ($injector, $http, $httpBackend, $rootScope, $q) ->
   @http = $http
   @q = $q
-  @path = "api/v1/colleges"
+  @httpBackend = $httpBackend
+  @rootScope = $rootScope
+  @path = "/api/v1/colleges"
   @subject = $injector.get 'collegeService', {$http: @http, $q: @q}
  
- describe "getAll()", ->
-  Given inject ($httpBackend, $rootScope) ->
-   @httpBackend = $httpBackend
-   @rootScope = $rootScope
-   @colleges = ['OSU','MSU'];
-   @httpBackend.when("GET", @path).respond(@colleges);
-   #@h = spyOn(@http, 'get').andCallThrough() #.andReturn(@colleges)
-   
+ describe "get()", ->
+  Given ->
+   @colleges = ['OSU','MSU']
+   @httpBackend.when("GET", @path).respond(@colleges)
+      
   When -> 
-   @promise = @subject.getAll().then (data) => @result = data
-   
+   @subject.get()
    @httpBackend.flush()
    @rootScope.$apply()
    
+  Then -> @httpBackend.expectGET(@path)
+  Then -> expect(@subject.colleges).toEqual(@colleges)
+  
+ describe "add()", ->
+  Given ->
+   @college = 'UM'
+   @httpBackend.when("POST",@path).respond(@college)
    
-  Then -> @httpBackend.expectGET(@path);
-  Then -> expect(@result).toEqual(@colleges)
+  When ->
+   @subject.add(@college)
+   @httpBackend.flush()
+   @rootScope.$apply()
+   
+  Then -> @httpBackend.expectPOST(@path, {name: @college})
+  Then -> expect(@subject.colleges).toContain(@college)
+  

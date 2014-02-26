@@ -8,9 +8,13 @@
 <body>
     <div ng-controller="collegesController as colleges">
     	<ul>
-    		<li ng-repeat="college in colleges.list">{{ college }}</li>
+    		<li ng-repeat="college in colleges.list()">{{ college.name }}</li>
     	</ul>
+     <input type='text' ng-model='colleges.newCollege'>
+     <button ng-click='colleges.add(colleges.newCollege)'>Add</button>
     </div>
+    
+    
 	<script type="text/javascript" src="<%= js %>"></script>
 </body>
 </html>

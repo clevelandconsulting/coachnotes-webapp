@@ -14,8 +14,11 @@
 
 module.exports = {
   drawRoutes: function(app) {
-     app.get('api/v1/college', function(req, res){
-       res.json(['OSU','MSU']);
+     app.get('/api/v1/colleges', function(req, res){
+       res.json([{name: 'OSU'},{name: 'MSU'}]);
+     });
+     app.post('/api/v1/colleges', function(req, res) {
+	   res.json(req.body);
      });
   }
 };

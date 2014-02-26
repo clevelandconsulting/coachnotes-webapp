@@ -1,36 +1,23 @@
 describe "collegesController", ->
  Given -> module ("app")
- Given inject ($controller, $q, $timeout, $rootScope) ->
+ Given inject ($controller, $q) ->
   @colleges = ['OSU','MSU']
-  @collegeService = {
-    all: ->,
-  	getAll: -> ,
-  	colleges: @colleges,
-  	add: ->,
-  	remove: ->,
-  	select: ->,
-  	selected: ->,
-  }
-  @d = $q.defer()
-  #f =  => 
-  #$timeout f, 100
-  @rootScope = $rootScope
+  @collegeService = { get: -> }
+  @controller = $controller
+  spyOn(@collegeService,'get')#.andReturn(@d.promise)
+ 
+ When -> @subject = @controller "collegesController", {collegeService:@collegeService}
+   
+ Then -> expect(@collegeService.get).toHaveBeenCalled()
   
-  spyOn(@collegeService,'getAll').andReturn(@d.promise)
-  @subject = $controller "collegesController", {collegeService:@collegeService}
-  
- #When -> @rootScope.$apply() 
- Then -> expect(@collegeService.getAll).toHaveBeenCalled()
-  
- describe "list", ->
-  When ->
-   @d.resolve @colleges
-   @rootScope.$apply() 
-   @result = @subject.list
+ describe "list()", -> 
+  Given -> @collegeService.colleges = @colleges 
+  When -> @result = @subject.list()
   Then -> expect(@result).toEqual(@colleges)
   
  describe "add()", ->
   Given -> 
+   @collegeService.add = ->
    @college = "UM"
    
   describe "when the college service returns true", ->
@@ -50,6 +37,7 @@ describe "collegesController", ->
   
  describe "remove()", ->
   Given ->
+   @collegeService.remove = ->
    @college = "UM"
    
   describe "when the college service returns true", ->
@@ -68,6 +56,7 @@ describe "collegesController", ->
    
  describe "select()", ->
   Given ->
+   @collegeService.select = ->
    @college = "UM"
    
   describe "when the college service returns true", ->
@@ -80,6 +69,7 @@ describe "collegesController", ->
    
  describe "getSelected()", ->
   Given ->
+   @collegeService.selected = ->
    @college = "UM"
    
   describe "when the college service returns a college", ->
