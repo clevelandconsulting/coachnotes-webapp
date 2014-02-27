@@ -4,7 +4,7 @@ describe "collegesController", ->
   @colleges = ['OSU','MSU']
   @collegeService = { get: -> }
   @controller = $controller
-  spyOn(@collegeService,'get')#.andReturn(@d.promise)
+  spyOn(@collegeService,'get')
  
  When -> @subject = @controller "collegesController", {collegeService:@collegeService}
    
@@ -57,7 +57,7 @@ describe "collegesController", ->
  describe "select()", ->
   Given ->
    @collegeService.select = ->
-   @college = "UM"
+   @college = {name: "UM"}
    
   describe "when the college service returns true", ->
    Given -> 
@@ -69,12 +69,12 @@ describe "collegesController", ->
    
  describe "getSelected()", ->
   Given ->
-   @collegeService.selected = ->
-   @college = "UM"
+   @college = {name: "UM"}
+   @collegeService.selection = @college
    
   describe "when the college service returns a college", ->
-   Given -> spyOn(@collegeService,"selected").andReturn(@college)
+   #Given -> spyOn(@collegeService,"selected").andReturn(@college)
       
    When -> @result = @subject.getSelected()
-   Then -> expect(@collegeService.selected).toHaveBeenCalled()
+   #Then -> expect(@collegeService.selected).toHaveBeenCalled()
    Then -> expect(@result).toBe(@college)

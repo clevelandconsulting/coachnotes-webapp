@@ -15,6 +15,6 @@ class collegesController
   @collegeService.select(name)
   
  getSelected: () ->
-  @collegeService.selected()
+  @collegeService.selection
   
 angular.module('app').controller 'collegesController', collegesController

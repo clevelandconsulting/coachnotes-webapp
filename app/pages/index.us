@@ -6,9 +6,9 @@
 	<link rel="stylesheet" type="text/css" href="<%= css %>" media = "all" />
 </head>
 <body>
-	<div class='row'>
+	<div class='row' ng-controller="collegesController as colleges">
 		<div class='small-4 columns'>
-		    <div class='row' ng-controller="collegesController as colleges">
+		    <div class='row' >
 		    	<h3>Colleges</h3>
 		    	<ul class='side-nav'>
 		    		<li ng-repeat="college in colleges.list()"><a ng-click='colleges.select(college)'>{{ college.name }}</a></li>
@@ -18,7 +18,7 @@
 		    </div>
 		</div>
 		<div class='small-8 columns'>
-			<p>{{ collegeService.selected() }}</p>
+			<h4>{{ colleges.getSelected().name }}</h4>
 		</div>
 	</div>
     

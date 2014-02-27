@@ -11,15 +11,19 @@ class collegeService
   
   @d.promise
 
- add: (name) ->
+ add: (name) ->  
   @d = @q.defer();
   @http.post('/api/v1/colleges', {name:name} ).success (data) =>
    @d.resolve data
    if @colleges? 
-    @colleges.push data
+    if !(data in @colleges)
+     @colleges.push data
    else 
     @colleges = [data]
    
   @d.promise
+  
+ select: (name) ->
+  @selection = name
   
 angular.module('app').service 'collegeService', collegeService

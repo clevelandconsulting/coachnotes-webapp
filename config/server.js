@@ -18,7 +18,7 @@ module.exports = {
        res.json([{name: 'OSU'},{name: 'MSU'}]);
      });
      app.post('/api/v1/colleges', function(req, res) {
-	   res.json(req.body);
+	   res.json({name: req.body.name});
      });
   }
 };
