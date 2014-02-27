@@ -15,10 +15,17 @@
 module.exports = {
   drawRoutes: function(app) {
      app.get('/api/v1/colleges', function(req, res){
-       res.json([{name: 'OSU'},{name: 'MSU'}]);
+       res.json([{name: 'OSU', id: 1},{name: 'MSU', id: 2}]);
      });
      app.post('/api/v1/colleges', function(req, res) {
-	   res.json({name: req.body.name});
+       var id = 3;
+       if ( req.body.name === 'OSU') id = 1;
+       if ( req.body.name === 'MSU') id = 2;
+       
+	   res.json({name: req.body.name, id: id});
+     });
+     app.delete('/api/v1/colleges/1', function(req, res) {
+	   res.json();
      });
   }
 };

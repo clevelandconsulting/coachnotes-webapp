@@ -17,4 +17,9 @@ class collegesController
  getSelected: () ->
   @collegeService.selection
   
+ flash: () ->
+  error = @collegeService.lastError
+  if error == 404
+   "We're sorry, we were unable to process your request.  The resource was not found."
+  
 angular.module('app').controller 'collegesController', collegesController

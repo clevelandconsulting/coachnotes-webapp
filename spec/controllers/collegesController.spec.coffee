@@ -78,3 +78,10 @@ describe "collegesController", ->
    When -> @result = @subject.getSelected()
    #Then -> expect(@collegeService.selected).toHaveBeenCalled()
    Then -> expect(@result).toBe(@college)
+   
+ describe "flash() when college service is a 404", ->
+  Given ->
+   @collegeService.lastError = 404
+   
+  When -> @result = @subject.flash()
+  Then -> expect(@result).toEqual("We're sorry, we were unable to process your request.  The resource was not found.")

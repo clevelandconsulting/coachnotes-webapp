@@ -15,8 +15,8 @@ describe "collegeService", ->
   @httpBackend = $httpBackend
   @rootScope = $rootScope
   @path = "/api/v1/colleges"
-  @colleges = ['OSU','MSU']
-  @subject = $injector.get 'collegeService', {$http: @http, $q: @q}
+  @colleges = [{name:'OSU', id: 1},{name:'MSU', id: 2}]
+  @subject = $injector.get 'collegeService', {$http: @http, $q: @q, objectArrayService:$injector.get 'objectArrayService'}
  
  describe "get()", ->
   Given ->
@@ -52,14 +52,62 @@ describe "collegeService", ->
     @httpBackend.flush()
     @rootScope.$apply()
     
-   Then -> @httpBackend.expectPOST(@path, {name: 'OSU'})
+   Then -> @httpBackend.expectPOST(@path, {name:'OSU'})
    Then -> expect(@subject.colleges).toEqual(@expectedColleges)
   
  describe "select()", ->
   Given -> @subject.colleges = @colleges
    
   describe "when called with a college in the list", ->
-   Given -> @college = {name: 'OSU'}
+   Given -> @college = {name:'OSU'}
    When -> @subject.select(@college)
-   Then -> expect(@subject.selection).toBe(@college)
+   Then -> expect(@subject.selection).toEqual(@college)
    
+  describe "when called with a college not in the list", ->
+   Given -> @college = {name:'UM'}
+   When -> @subject.select(@college)
+   Then -> expect(@subject.selection).not.toEqual(@college)
+   
+ describe "remove()", ->
+  Given -> 
+   @subject.colleges = @colleges
+   
+  describe "with successful http response", ->
+   Given ->
+    @httpBackend.when("DELETE",@path+'/1').respond (method, url, data, headers) -> [204, '', '']
+    @httpBackend.when("DELETE",@path+'/3').respond (method, url, data, headers) -> [204, '', '']
+   
+   describe "when called with a college in the list", ->
+    Given -> @college = {name:'OSU', id: 1}
+    When -> 
+     @subject.remove(@college)
+     @httpBackend.flush()
+     @rootScope.$apply()
+    
+    Then -> @httpBackend.expectDELETE(@path+'/1','')
+    Then -> expect(@subject.colleges).not.toContain(@college)
+    Then -> expect(@subject.colleges).toContain({name: 'MSU', id: 2})
+   
+   describe "when called with a college not in the list", ->
+    Given -> @college = {name:'UM', id: 3}
+    When -> 
+     @subject.remove(@college)
+     @httpBackend.flush()
+     @rootScope.$apply()
+    
+    Then -> @httpBackend.expectDELETE(@path+'/3','')
+    Then -> expect(@subject.colleges).toEqual(@colleges)
+  
+  describe 'with unsuccessful http response', ->
+   Given ->
+    @college = {name:'OSU', id: 2}
+    @httpBackend.when("DELETE",@path+'/2').respond (method, url, data, headers) -> [404, '', '']
+    
+   When ->
+    @subject.remove(@college)
+    @httpBackend.flush()
+    @rootScope.$apply()
+    
+   Then -> @httpBackend.expectDELETE(@path+'/2','')
+   Then -> expect(@subject.colleges).toEqual(@colleges)
+   Then -> expect(@subject.lastError).toEqual(404)
