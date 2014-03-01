@@ -62,5 +62,9 @@ module.exports = {
      app.delete('/api/v1/colleges/2', function(req, res) {
 	   res.json();
      });
+     
+     app.delete('/api/v1/colleges/3', function(req, res) {
+	   res.json();
+     });
   }
 };

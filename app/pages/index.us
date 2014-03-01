@@ -6,9 +6,16 @@
 	<link rel="stylesheet" type="text/css" href="<%= css %>" media = "all" />
 </head>
 <body>
-    <div class='row'>
-    	<div class='small-12 columns'><h3>Coach Notes</h3></div>
-    </div>
+  <div class='contain-to-grid'>
+    <nav class="top-bar" data-topbar>
+	  <ul class="title-area">
+	    <li class="name">
+	      <h1><a href="#">Coach Notes</a></h1>
+	    </li>
+	    <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+	  </ul>
+	</nav>
+  </div>
 	<div ng-controller="collegesController as colleges">
 		<div class='row' ng-show='colleges.collegeRepository.lastError'>
 			<div class='small-12 columns'>	
