@@ -6,25 +6,35 @@
 	<link rel="stylesheet" type="text/css" href="<%= css %>" media = "all" />
 </head>
 <body>
+    <div class='row'>
+    	<div class='small-12 columns'><h3>Coach Notes</h3></div>
+    </div>
 	<div ng-controller="collegesController as colleges">
-		<div class='row' ng-show='colleges.collegeService.lastError'>
+		<div class='row' ng-show='colleges.collegeRepository.lastError'>
 			<div class='small-12 columns'>	
-				<div data-alert class='alert-box warning'>{{ colleges.flash() }}</div>
+				<div data-alert class='alert-box alert'>{{ colleges.flash() }}</div>
 			</div>
 		</div>
 		<div class='row'>
-			<div class='small-4 columns'>
-			    <div class='row' >
-			    	<h3>Colleges</h3>
-			    	<ul>
-			    		<li ng-repeat="college in colleges.list()"><a ng-click='colleges.select(college)'>{{ college.name }}</a>|<a ng-click='colleges.remove(college)'>Delete</a></li>
-			    	</ul>
+			<div class='small-4 columns'>			    
+		    	<h3>Colleges</h3>
+		    	<ul class='custom-side-nav'>
+		    		<li ng-repeat="college in colleges.list()">
+		    			  <a ng-click='colleges.select(college)'>{{ college.name }}</a>
+		    		</li>
+		    	</ul>
 			     <input type='text' ng-model='colleges.newCollege'>
 			     <button ng-click='colleges.add(colleges.newCollege)'>Add</button>
-			    </div>
 			</div>
 			<div class='small-8 columns'>
-				<h4>{{ colleges.getSelected().name }}</h4>
+				<div ng-show='colleges.hasSelection()'>
+					<h4>Players For {{ colleges.getSelected().name }}</h4>
+					<ul class='custom-side-nav'>
+						<li ng-repeat="players in colleges.playerRepository.items">{{ players.name }}</li>
+					</ul>
+					<button class='alert' ng-click='colleges.remove(colleges.getSelected())'>Delete College</button>
+					<p><pre><code>{{ colleges.getSelected() }}</code></pre></p>
+				</div>
 			</div>
 		</div>
 	</div>

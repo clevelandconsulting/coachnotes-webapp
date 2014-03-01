@@ -1,24 +1,34 @@
 class collegesController
- constructor: (@collegeService) ->
-  @collegeService.get()
+ constructor: (@collegeRepository, @playerRepository, @objectArrayService) ->
+  @collegeRepository.get()
  
  list: ->
-  @collegeService.colleges
+  @collegeRepository.getColleges()
   
  add: (name) ->
-  @collegeService.add(name)
+  @collegeRepository.add(name)
   
- remove: (name) ->
-  @collegeService.remove(name)
+ remove: (college) ->
+  if @collegeRepository.selection? and @objectArrayService.inArray([@collegeRepository.selection],college)
+   @collegeRepository.select()
+  result = @collegeRepository.remove(college)
   
- select: (name) ->
-  @collegeService.select(name)
+  
+ select: (college) ->
+  result = @collegeRepository.select(college)
+  @playerRepository.path = college.resources.players
+  @playerRepository.get()
+  
+  result
+  
+ hasSelection: ->
+  @collegeRepository.selection?
   
  getSelected: () ->
-  @collegeService.selection
+  @collegeRepository.selection
   
  flash: () ->
-  error = @collegeService.lastError
+  error = @collegeRepository.lastError
   if error == 404
    "We're sorry, we were unable to process your request.  The resource was not found."
   
