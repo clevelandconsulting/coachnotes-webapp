@@ -39,6 +39,8 @@
 					<ul class='custom-side-nav'>
 						<li ng-repeat="players in colleges.playerRepository.items">{{ players.name }}</li>
 					</ul>
+					<input type='text' ng-model='colleges.newPlayer'>
+					<button ng-click='colleges.playerRepository.add(colleges.newPlayer)'>Add</button>
 					<button class='alert' ng-click='colleges.remove(colleges.getSelected())'>Delete College</button>
 					<p><pre><code>{{ colleges.getSelected() }}</code></pre></p>
 				</div>

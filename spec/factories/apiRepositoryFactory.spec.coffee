@@ -23,8 +23,6 @@ describe "apiRespository", ->
  When -> 
  
  Then -> expect(@subject).toBeDefined()
- #Then -> expect(@subject.$http).toBeDefined()
- #Then -> expect(@subject.q).toBeDefined()
  
  #####################################################################
  #

@@ -15,7 +15,6 @@ angular.module('app').factory 'apiRepositoryFactory', ['$http','$q','objectArray
 	  @d = $q.defer();
 	  $http.post(@path, item ).success (data) =>
 	   @d.resolve data
-	   console.log @items, data
 	   if @items? 
 	    if !objectArrayService.inArray @items, data
 	     @items.push data

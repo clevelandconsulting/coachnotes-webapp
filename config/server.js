@@ -55,6 +55,11 @@ module.exports = {
 	   res.json({name: req.body.name, id: id, resources: { players: player }});
      });
      
+     app.post('/api/v1/colleges/2/players', function(req, res) {
+       var id = 3;
+	   res.json({name: req.body.name, id: id, resources: { college: '/api/v1/colleges/2' }});
+     });
+     
      app.delete('/api/v1/colleges/1', function(req, res) {
 	   res.json();
      });
