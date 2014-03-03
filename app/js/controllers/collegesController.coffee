@@ -16,7 +16,7 @@ class collegesController
   
  select: (college) ->
   result = @collegeRepository.select(college)
-  @playerRepository.path = college.resources.players
+  @playerRepository.path = college.resources.players.url
   @playerRepository.get()
   
   result

@@ -27,7 +27,7 @@
 		    	<h3>Colleges</h3>
 		    	<ul class='custom-side-nav'>
 		    		<li ng-repeat="college in colleges.list()">
-		    			  <a ng-click='colleges.select(college)'>{{ college.name }}</a>
+		    			  <a ng-click='colleges.select(college)'>{{ college.data.name }}</a>
 		    		</li>
 		    	</ul>
 			     <input type='text' ng-model='colleges.newCollege'>
@@ -35,9 +35,9 @@
 			</div>
 			<div class='small-8 columns'>
 				<div ng-show='colleges.hasSelection()'>
-					<h4>Players For {{ colleges.getSelected().name }}</h4>
+					<h4>Players For {{ colleges.getSelected().data.name }}</h4>
 					<ul class='custom-side-nav'>
-						<li ng-repeat="players in colleges.playerRepository.items">{{ players.name }}</li>
+						<li ng-repeat="players in colleges.playerRepository.items">{{ players.data.name }} ({{players}})</li>
 					</ul>
 					<input type='text' ng-model='colleges.newPlayer'>
 					<button ng-click='colleges.playerRepository.add(colleges.newPlayer)'>Add</button>

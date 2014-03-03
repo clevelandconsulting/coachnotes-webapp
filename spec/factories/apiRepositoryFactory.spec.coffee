@@ -2,19 +2,23 @@ describe "apiRespository", ->
 
  Given -> module("app")
  
- Given inject ($injector, $http, $q, $httpBackend, $rootScope) ->
+ Given inject ($injector, $http, $q, $httpBackend, $rootScope, _apiModelFactory_) ->
   @http = $http
   @q = $q
   @httpBackend = $httpBackend
   @rootScope = $rootScope 
   @objectArrayService = $injector.get 'objectArrayService'
-  
+  @apiModelFactory = _apiModelFactory_
   @apiRepositoryFactoryFactory = $injector.get 'apiRepositoryFactory', {$http:@http,$q:@a,objectArrayService:@objectArrayService}
   
   @obj1 = {attribute1: 'somevalue1', attribute2: 'somevalue2'}
   @obj2 = {attribute1: 'somevalue1a', attribute2: 'somevalue2a'}
   @newObj = {attribute1:'newvalue',attribute2:'newvalue2'}
   @items = [@obj1,@obj2]
+  @itemsAsModel = []
+  for item in @items
+   @itemsAsModel.push new @apiModelFactory item
+   
   @path = 'somePath'
   @subject = new @apiRepositoryFactoryFactory() #(@http,@q,objectArrayService)
   
@@ -40,7 +44,7 @@ describe "apiRespository", ->
    @rootScope.$apply()
    
   Then -> @httpBackend.expectGET(@path)
-  Then -> expect(@subject.items).toEqual(@items)
+  Then -> expect(@subject.items).toEqual(@itemsAsModel)
   
  describe "get() with an invalid response", ->
   Given ->
@@ -64,6 +68,7 @@ describe "apiRespository", ->
    
  describe "add()", ->
   Given ->
+   @model = new @apiModelFactory(@newObj)
    @subject.items = @items
    @httpBackend.when("POST",@path).respond(@newObj)
    
@@ -74,7 +79,7 @@ describe "apiRespository", ->
     @rootScope.$apply()
    
    Then -> @httpBackend.expectPOST(@path, @newObj)
-   Then -> expect(@subject.items).toContain(@newObj)
+   Then -> expect(@subject.items).toContain(@model)
   
   describe "when adding an item already in the list", ->
    When ->

@@ -1,11 +1,26 @@
-angular.module('app').factory 'apiRepositoryFactory', ['$http','$q','objectArrayService', ($http, $q, objectArrayService) ->
+typeIsArray = ( value ) ->
+    value and
+        typeof value is 'object' and
+        value instanceof Array and
+        typeof value.length is 'number' and
+        typeof value.splice is 'function' and
+        not ( value.propertyIsEnumerable 'length' )
+
+
+angular.module('app').factory 'apiRepositoryFactory', ['$http','$q','objectArrayService', 'apiModelFactory', ($http, $q, objectArrayService, apiModelFactory) ->
  class apiRepositoryFactory
 
 	 get: ->
 	  @d = $q.defer();
 	  $http.get(@path).success (data) =>
-	   @d.resolve data
-	   @items = data
+	   @items = []
+	   if typeIsArray data
+	    for obj in data
+	     @items.push new apiModelFactory obj
+	   else
+         @items.push new apiModelFactory data
+         
+	   @d.resolve @items
 	  .error (data, code) =>
 	   @items = []
 	  
@@ -14,12 +29,13 @@ angular.module('app').factory 'apiRepositoryFactory', ['$http','$q','objectArray
 	 add: (item) ->  
 	  @d = $q.defer();
 	  $http.post(@path, item ).success (data) =>
-	   @d.resolve data
+	   model = new apiModelFactory(data)
+	   @d.resolve model
 	   if @items? 
-	    if !objectArrayService.inArray @items, data
-	     @items.push data
+	    if !objectArrayService.inArray @items, model
+	     @items.push model
 	   else 
-	    @items = [data]
+	    @items = [model]
 	   
 	  @d.promise
 	  

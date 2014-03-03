@@ -1,7 +1,7 @@
 describe "apiNameIdRepositoryFactory", ->
  Given -> module("app")
  
- Given inject ($injector, $http, $httpBackend, $rootScope, $q, _apiRepositoryFactory_) ->
+ Given inject ($injector, $http, $httpBackend, $rootScope, $q, _apiRepositoryFactory_, _apiModelFactory_) ->
   @http = $http
   @q = $q
   @httpBackend = $httpBackend
@@ -9,7 +9,7 @@ describe "apiNameIdRepositoryFactory", ->
   @path = "/api/v1/colleges"
   @colleges = [{name:'OSU', id: 1},{name:'MSU', id: 2}]
   @mockapiRepositoryFactory = angular.mock.inject _apiRepositoryFactory_
-  
+  @apiModelFactory = _apiModelFactory_
   @apiNameIdRepositoryFactoryFactory = $injector.get 'apiNameIdRepositoryFactory', {apiRepositoryFactory:@mockapiRepositoryFactory}
   @subject = new @apiNameIdRepositoryFactoryFactory()
   @subject.path = @path
@@ -45,11 +45,12 @@ describe "apiNameIdRepositoryFactory", ->
   describe "when adding a new college" , ->
    When ->
     @subject.add('um')
+    @model = new @apiModelFactory({name: 'UM'})
     @httpBackend.flush()
     @rootScope.$apply()
    
    Then -> @httpBackend.expectPOST(@path, {name: 'um'})
-   Then -> expect(@subject.items).toContain({name: @college})
+   Then -> expect(@subject.items).toContain(@model)
   
   describe "when adding a college already in the list", ->
    When ->

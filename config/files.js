@@ -15,6 +15,7 @@ module.exports = function(lineman) {
     coffee: {
 	    app: [
     	 	"app/js/main.coffee",
+    	 	"app/js/factories/apiResourceFactory.coffee",
     	 	"app/js/factories/**/*.coffee",
     	 	"app/js/services/**/*.coffee",
     	 	"app/js/**/*.coffee"

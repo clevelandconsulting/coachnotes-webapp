@@ -1,9 +1,10 @@
 describe "collegesController", ->
  Given -> module ("app")
- Given inject ($controller, $q, _collegeRepository_ ) ->
+ Given inject ($controller, $q, _collegeRepository_, _apiModelFactory_ ) ->
   @colleges = ['OSU','MSU']
   #cr = angular.mock.inject _collegeRepository_
   #console.log cr
+  @apiModelFactory = _apiModelFactory_
   @collegeRepository = { 
    path: '/api/v1/colleges', 
    get: -> 
@@ -81,14 +82,15 @@ describe "collegesController", ->
   Given ->
    @collegeRepository.select = ->
    @college = {name: "UM", id:2, resources: { players: @collegeRepository.path + '/2/players' } }
+   @collegeModel = new @apiModelFactory(@college)
    
   describe "when the college service returns true", ->
    Given -> 
     spyOn(@collegeRepository,"select").andReturn(true)
     spyOn(@playerRepository,"get")
     
-   When -> @result = @subject.select(@college)
-   Then -> expect(@collegeRepository.select).toHaveBeenCalledWith(@college)
+   When -> @result = @subject.select(@collegeModel)
+   Then -> expect(@collegeRepository.select).toHaveBeenCalledWith(@collegeModel)
    Then -> expect(@result).toBeTruthy()
    Then -> expect(@playerRepository.path).toEqual(@collegeRepository.path + '/2/players')
    Then -> expect(@playerRepository.get).toHaveBeenCalled()
