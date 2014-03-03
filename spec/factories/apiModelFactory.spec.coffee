@@ -2,19 +2,35 @@ describe "apiModelFactory", ->
  Given -> module ('app')
  Given inject ($injector, _apiResourceFactory_ ) ->
   @apiResourceFactory = _apiResourceFactory_
-  @subject = $injector.get "apiModelFactory", _apiResourceFactory_
-  
- Then -> expect(@subject).toBeDefined()
- 
+  @players = '/api/v1/colleges/1/players'
+  @data = {}
+  @playersResource = new @apiResourceFactory()
+  @playersResource.setUrl @players
+  @modelFactory = $injector.get "apiModelFactory", _apiResourceFactory_
+   
+ Then -> expect(@modelFactory).toBeDefined()
+
  describe "generating a new model with valid json", ->
   Given -> 
-   @name = 'OSU'
-   @id = 1
-   @players = '/api/v1/colleges/1/players'
-   @json = { name: @name, id: @id, resources: { players: @players } }
+   @data.name = 'OSU'
+   @data.id = 1
+   @json = { name: @data.name, id: @data.id, resources: { players: @players } }
    
-  When -> @collegeModel = new @subject(@json)
+  When -> @subject = new @modelFactory(@json)
   
-  Then -> expect(@collegeModel.data.id).toBe(@id)
-  Then -> expect(@collegeModel.data.name).toBe(@name)
-  Then -> expect(@collegeModel.resources.players.url).toBe(@players)
+  Then -> expect(@subject.data.id).toBe(@data.id)
+  Then -> expect(@subject.data.name).toBe(@data.name)
+  Then -> expect(@subject.resources.players).toEqual(@playersResource)
+  
+  
+  describe "getResource() with a valid resource name", ->
+   Given -> @resourceName = 'players'
+   
+   When -> @result = @subject.getResource(@resourceName)
+   Then -> expect(@result).toEqual(@playersResource)
+  
+  describe "getResource() with an invalid resource name", ->
+   Given -> @resourceName = 'something-not-valid'
+   
+   Then -> expect(-> @subject.getResource(@resourceName)).toThrow()
+   
