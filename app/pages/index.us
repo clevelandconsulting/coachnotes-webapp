@@ -17,7 +17,7 @@
 	</nav>
   </div>
 	<div ng-controller="collegesController as colleges">
-		<div class='row' ng-show='colleges.collegeRepository.lastError'>
+		<div class='row' ng-show='colleges.hasError()'>
 			<div class='small-12 columns'>	
 				<div data-alert class='alert-box alert'>{{ colleges.flash() }}</div>
 			</div>

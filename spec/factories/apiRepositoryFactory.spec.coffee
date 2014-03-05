@@ -69,11 +69,21 @@ describe "apiRespository", ->
  describe "add()", ->
   Given ->
    @model = new @apiModelFactory(@newObj)
-   @subject.items = @items
    @httpBackend.when("POST",@path).respond(@newObj)
+   
+  describe "when adding a new item with no list items" , ->
+   When ->
+    console.log @subject.items
+    @subject.add(@newObj)
+    @httpBackend.flush()
+    @rootScope.$apply()
+   
+   Then -> @httpBackend.expectPOST(@path, @newObj)
+   Then -> expect(@subject.items).toContain(@model) 
    
   describe "when adding a new item" , ->
    When ->
+    @subject.items = @items
     @subject.add(@newObj)
     @httpBackend.flush()
     @rootScope.$apply()
@@ -83,6 +93,7 @@ describe "apiRespository", ->
   
   describe "when adding an item already in the list", ->
    When ->
+    @subject.items = @items
     @expectedItems = @subject.items
     @item = @obj1
     @subject.add(@item)

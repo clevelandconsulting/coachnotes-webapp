@@ -7,7 +7,8 @@ describe "collegesController", ->
   @apiModelFactory = _apiModelFactory_
   @collegeRepository = { 
    path: '/api/v1/colleges', 
-   get: -> 
+   get: -> ,
+   lastError: 0
   }
   @playerRepository = { 
    path:'',
@@ -87,9 +88,11 @@ describe "collegesController", ->
   describe "when the college service returns true", ->
    Given -> 
     spyOn(@collegeRepository,"select").andReturn(true)
-    spyOn(@playerRepository,"get")
+    spyOn(@playerRepository,"get").andReturn(true)
+    @collegeRepository.selection = @collegeModel
     
    When -> @result = @subject.select(@collegeModel)
+
    Then -> expect(@collegeRepository.select).toHaveBeenCalledWith(@collegeModel)
    Then -> expect(@result).toBeTruthy()
    Then -> expect(@playerRepository.path).toEqual(@collegeRepository.path + '/2/players')
@@ -119,10 +122,81 @@ describe "collegesController", ->
   describe "when the college service returns a college", ->
    When -> @result = @subject.getSelected()
    Then -> expect(@result).toBe(@college)
+
+ describe "getError()", ->
+  Given -> @error = 'some error'
+  
+  describe 'when the controller error is set', ->
+   When -> @subject.error = @error
+   Then -> expect(@subject.getError()).toBe(@error)
    
+  describe 'when the controller error is not set',->
+   When -> @subject.error = ''
+   Then -> expect(@subject.getError()).not.toBeDefined()
+   
+  describe 'when the collegeRepository.lastError is set to some error', ->
+   When -> @collegeRepository.lastError = @error
+   Then -> expect(@subject.getError()).toBe(@error)
+  
+  describe 'when the collegeRepository.lastError is not set', ->
+   When -> @collegeRepository.lastError = ''
+   Then -> expect(@subject.getError()).not.toBeDefined()
+  
+  describe 'when the collegeRepository.lastError is 0', ->
+   When -> @collegeRepository.lastError = 0
+   Then -> expect(@subject.getError()).not.toBeDefined()
+  
+  describe 'when the collegeRepository.lastError is 404', ->
+   When -> @collegeRepository.lastError = 404
+   Then -> expect(@subject.getError()).toEqual("We're sorry, we were unable to process your request.  The resource was not found.")
+  
+ describe "hasError()", ->
+  Given -> @error = 'some error'
+  
+  describe "when the controller error is set", ->
+   When -> @subject.error = @error
+   Then -> expect(@subject.hasError()).toBe(true)  
+  
+  describe "when the controller error is not set", ->
+   When -> @subject.error = ''
+   Then -> expect(@subject.hasError()).toBe(false)  
+  
+  describe "when the collegeRepository.lastError is set", ->
+   When -> @collegeRepository.lastError = @error
+   Then -> expect(@subject.hasError()).toBe(true)  
+  
+  describe "when the collegeRepository.lastError is not set", ->
+   When -> @collegeRepository.lastError = ''
+   Then -> expect(@subject.hasError()).toBe(false)  
+  
+  
  describe "flash() when college service is a 404", ->
   Given ->
    @collegeRepository.lastError = 404
    
   When -> @result = @subject.flash()
   Then -> expect(@result).toEqual("We're sorry, we were unable to process your request.  The resource was not found.")
+  
+ describe "flash() when there is an error", ->
+  Given -> @subject.error = 'There was an error'
+  When -> @result = @subject.flash()
+  Then -> expect(@result).toEqual(@subject.error)
+  
+ describe "loadPlayers() when a college is selected", ->
+  Given ->  
+   @collegeRepository.selection = new @apiModelFactory({"name":"OSU","id":1,"resources":{"players":"/api/v1/colleges/1/players"}})
+   spyOn(@playerRepository, 'get').andReturn(true)
+   
+  When -> @subject.loadPlayers()
+  Then -> expect(@playerRepository.path).toEqual(@collegeRepository.selection.getResource('players').url)
+  Then -> expect(@playerRepository.get).toHaveBeenCalled()
+  
+ describe "loadPlayers() when college is selected but has no players resource", ->
+  Given ->  
+   @collegeRepository.selection = new @apiModelFactory({"name":"OSU","id":1})
+   spyOn(@playerRepository, 'get').andReturn(true)
+   
+  When -> @subject.loadPlayers()
+  Then -> expect(@playerRepository.get).not.toHaveBeenCalled()
+  Then -> expect(@subject.error).toEqual('No resource named players found.')
+  

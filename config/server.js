@@ -38,6 +38,7 @@ module.exports = {
         ]);
      });
      
+     /*
      app.get('/api/v1/colleges/3/players', function(req, res){
        res.json(
         [
@@ -45,7 +46,7 @@ module.exports = {
           {name: 'Slammy Sammy', id: 6, resources: { college: '/api/v1/colleges/3' } }
         ]);
      });
-     
+     */
      app.post('/api/v1/colleges', function(req, res) {
        var id = 3;
        if ( req.body.name === 'OSU') id = 1;
